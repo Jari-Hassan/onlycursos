@@ -1,4 +1,4 @@
-#include"pch.h"
+#include "pch.h"
 #include <iostream>
 #include <string>
 #include <ctime>
@@ -12,9 +12,11 @@
 #include "Calificacion.h"
 #include "Historial.h"
 #include "Ordenamiento.h"
+#include "Fondos.h" // Incluimos nuestro nuevo archivo de fondos
 
-using namespace std;
+// Es importante incluir estos namespaces al principio
 using namespace System;
+using namespace std;
 
 // ======= Estructuras globales (MEMORIA) =======
 ListaEnlazada<Usuario> usuarios;
@@ -38,24 +40,29 @@ void registrarHistorial(string accion, string detalle) {
 
 // -------- Menú principal (pantalla) --------
 void mostrarMenu() {
-    int x = 18, y = 3;
+    // Dibujar el fondo gráfico usando nuestras matrices
+    Fondos::DibujarFondoMenuPrincipal();
+    Fondos::DibujarLogoMenuPrincipal(18, 3);
+
+    // Dibuja un borde para el menú
+    Fondos::DibujarBordeMenu(18, 14, 50, 15, ConsoleColor::Green);
+
+    int x = 18, y = 15;
     Console::ForegroundColor = ConsoleColor::Cyan;
-    Console::SetCursorPosition(x, y);
-    cout << "   ___                  ____                       \n";
-    Console::SetCursorPosition(x, y + 1);
-    cout << "  / _ \\ _ __   ___ _ __/ ___|   _ _ __ ___  ___  ___\n";
-    Console::SetCursorPosition(x, y + 2);
-    cout << " | | | | '_ \\ / _ \\ '_ \\___ \\ | | | '__/ __|/ _ \\/ __|\n";
-    Console::SetCursorPosition(x, y + 3);
-    cout << " | |_| | |_) |  __/ | | |__) || |_| | |  \\__ \\ (_) \\__ \\\n";
-    Console::SetCursorPosition(x, y + 4);
-    cout << "  \\___/| .__/ \\___|_| |_____/ \\__,_|_|  |___/\\___/|___/\n";
-    Console::SetCursorPosition(x, y + 5);
-    cout << "       |_| Plataforma de Cursos Online Gratis\n";
+    Console::SetCursorPosition(x + 2, y);
+    cout << "   ___                  ____                       ";
+    Console::SetCursorPosition(x + 2, y + 1);
+    cout << "  / _ \\ _ __   ___ _ __/ ___|   _ _ __ ___  ___  ___";
+    Console::SetCursorPosition(x + 2, y + 2);
+    cout << " | | | | '_ \\ / _ \\ '_ \\___ \\ | | | '__/ __|/ _ \\/ __|";
+    Console::SetCursorPosition(x + 2, y + 3);
+    cout << " | |_| | |_) |  __/ | | |__) || |_| | |  \\__ \\ (_) \\__ \\";
+    Console::SetCursorPosition(x + 2, y + 4);
+    cout << "  \\___/| .__/ \\___|_| |_____/ \\__,_|_|  |___/\\___/|___/";
+    Console::SetCursorPosition(x + 2, y + 5);
+    cout << "       |_| Plataforma de Cursos Online Gratis";
 
     Console::ForegroundColor = ConsoleColor::White;
-    Console::SetCursorPosition(x, y + 6);
-    cout << "________________________________________________________________";
     Console::SetCursorPosition(x + 2, y + 7);  cout << " [1]  REGISTRAR USUARIO";
     Console::SetCursorPosition(x + 2, y + 8);  cout << " [2]  LISTAR CURSOS (con temario)";
     Console::SetCursorPosition(x + 2, y + 9);  cout << " [3]  INSCRIBIRSE EN CURSO";
@@ -67,8 +74,7 @@ void mostrarMenu() {
     Console::SetCursorPosition(x + 2, y + 15); cout << " [9]  ORDENAR CURSOS POR INSCRITOS";
     Console::SetCursorPosition(x + 2, y + 16); cout << " [10] VER HISTORIAL DE ACCIONES";
     Console::SetCursorPosition(x + 2, y + 17); cout << " [0]  SALIR";
-    Console::SetCursorPosition(x, y + 18);
-    cout << "________________________________________________________________";
+
     Console::SetCursorPosition(x + 2, y + 19);
     cout << " OPCION: ";
 }
@@ -129,213 +135,419 @@ void inicializarCursos() {
     cursos.agregar(js);
 }
 
-// -------- Helpers de “pantalla” --------
+// -------- Helpers de "pantalla" --------
 void esperarEnter() {
     cout << "\n\nPresione ENTER para volver al menu...";
     cin.get();
 }
 
 void pantallaListarCursos() {
-    Console::Clear();
-    cout << "========== CURSOS DISPONIBLES ==========\n\n";
+    // Usar fondo secundario
+    Fondos::DibujarFondoSecundario();
+
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "========== CURSOS DISPONIBLES ==========";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    int y = 4;
     int n = 1;
     cursos.mostrar([&](const Curso& c) {
-        cout << n++ << ". " << c.titulo << "\n";
-        cout << "   Categoria: " << c.categoria << " | Nivel: " << c.nivel << "\n";
-        cout << "   Instructor: " << c.nombreInstructor << " | Duracion: " << c.duracionHoras << "h\n";
-        cout << "   Inscritos: " << c.inscritos << "\n";
-        cout << "   Temario:\n";
+        Console::SetCursorPosition(5, y++);
+        cout << n++ << ". " << c.titulo;
+        Console::SetCursorPosition(5, y++);
+        cout << "   Categoria: " << c.categoria << " | Nivel: " << c.nivel;
+        Console::SetCursorPosition(5, y++);
+        cout << "   Instructor: " << c.nombreInstructor << " | Duracion: " << c.duracionHoras << "h";
+        Console::SetCursorPosition(5, y++);
+        cout << "   Inscritos: " << c.inscritos;
+        Console::SetCursorPosition(5, y++);
+        cout << "   Temario:";
         for (size_t i = 0; i < c.temario.size(); ++i) {
-            cout << "     - " << c.temario[i] << "\n";
+            Console::SetCursorPosition(7, y++);
+            cout << "- " << c.temario[i];
         }
-        cout << "\n";
+        y++; // Espacio entre cursos
         });
+
+    Console::SetCursorPosition(5, y);
     esperarEnter();
 }
 
 void pantallaVerUsuarios() {
-    Console::Clear();
-    cout << "========== USUARIOS REGISTRADOS ==========\n\n";
+    Fondos::DibujarFondoSecundario();
+
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "========== USUARIOS REGISTRADOS ==========";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    int y = 4;
     int n = 1;
     usuarios.mostrar([&](const Usuario& u) {
-        cout << n++ << ". " << u.nombre << " " << u.apellido << "\n";
-        cout << "   DNI: " << u.dni << " | Correo: " << u.correo << "\n";
-        cout << "   Fecha registro: " << u.fechaRegistro << "\n\n";
+        Console::SetCursorPosition(5, y++);
+        cout << n++ << ". " << u.nombre << " " << u.apellido;
+        Console::SetCursorPosition(5, y++);
+        cout << "   DNI: " << u.dni << " | Correo: " << u.correo;
+        Console::SetCursorPosition(5, y++);
+        cout << "   Fecha registro: " << u.fechaRegistro;
+        y++; // Espacio entre usuarios
         });
-    cout << "Total usuarios: " << usuarios.tamanio() << "\n";
+
+    Console::SetCursorPosition(5, y);
+    cout << "Total usuarios: " << usuarios.tamanio();
     esperarEnter();
 }
 
 void pantallaVerInscritosPorCurso() {
-    Console::Clear();
+    Fondos::DibujarFondoSecundario();
+
     string tituloCurso;
-    cout << "VER INSCRITOS POR CURSO\n";
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "VER INSCRITOS POR CURSO";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    Console::SetCursorPosition(5, 4);
     cout << "Titulo del curso: ";
     getline(cin, tituloCurso);
 
     Curso* curso = cursos.buscar([&](const Curso& c) { return c.titulo == tituloCurso; });
     if (!curso) {
-        cout << "\nCurso no encontrado.\n";
-        return esperarEnter();
+        Console::SetCursorPosition(5, 6);
+        cout << "Curso no encontrado.";
+        esperarEnter();
+        return;
     }
 
-    cout << "\nInscritos en: " << tituloCurso << "\n\n";
-    int n = 1; bool hay = false;
+    Console::SetCursorPosition(5, 6);
+    cout << "Inscritos en: " << tituloCurso;
+
+    int y = 8;
+    int n = 1;
+    bool hay = false;
     inscripciones.mostrar([&](const Inscripcion& insc) {
         if (insc.tituloCurso == tituloCurso) {
             hay = true;
             Usuario* u = usuarios.buscar([&](const Usuario& x) { return x.correo == insc.correoUsuario; });
-            if (u) cout << n++ << ". " << u->nombre << " " << u->apellido << "\n";
-            else   cout << n++ << ". " << insc.correoUsuario << "\n";
-            cout << "   Progreso: " << insc.progreso << "%\n";
-            cout << "   Fecha: " << insc.fechaInscripcion << "\n\n";
+
+            Console::SetCursorPosition(5, y++);
+            if (u) cout << n++ << ". " << u->nombre << " " << u->apellido;
+            else   cout << n++ << ". " << insc.correoUsuario;
+
+            Console::SetCursorPosition(5, y++);
+            cout << "   Progreso: " << insc.progreso << "%";
+
+            Console::SetCursorPosition(5, y++);
+            cout << "   Fecha: " << insc.fechaInscripcion;
+            y++; // Espacio entre inscripciones
         }
         });
-    if (!hay) cout << "No hay inscritos aun.\n";
+
+    if (!hay) {
+        Console::SetCursorPosition(5, y);
+        cout << "No hay inscritos aun.";
+    }
+
     esperarEnter();
 }
 
 void pantallaMisCursos() {
-    Console::Clear();
+    Fondos::DibujarFondoSecundario();
+
     string correo;
-    cout << "MIS CURSOS\n";
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "MIS CURSOS";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    Console::SetCursorPosition(5, 4);
     cout << "Tu correo: ";
     getline(cin, correo);
 
-    cout << "\nTus cursos inscritos:\n\n";
-    int n = 1; bool hay = false;
+    Console::SetCursorPosition(5, 6);
+    cout << "Tus cursos inscritos:";
+
+    int y = 8;
+    int n = 1;
+    bool hay = false;
     inscripciones.mostrar([&](const Inscripcion& insc) {
         if (insc.correoUsuario == correo) {
             hay = true;
-            cout << n++ << ". " << insc.tituloCurso << "\n";
-            cout << "   Progreso: " << insc.progreso << "% | Fecha: " << insc.fechaInscripcion << "\n\n";
+            Console::SetCursorPosition(5, y++);
+            cout << n++ << ". " << insc.tituloCurso;
+
+            Console::SetCursorPosition(5, y++);
+            cout << "   Progreso: " << insc.progreso << "% | Fecha: " << insc.fechaInscripcion;
+            y++; // Espacio entre cursos
         }
         });
-    if (!hay) cout << "No tienes cursos inscritos.\n";
+
+    if (!hay) {
+        Console::SetCursorPosition(5, y);
+        cout << "No tienes cursos inscritos.";
+    }
+
     esperarEnter();
 }
 
 void pantallaBuscarCategoria() {
-    Console::Clear();
+    Fondos::DibujarFondoSecundario();
+
     string categoria;
-    cout << "BUSCAR CURSO POR CATEGORIA\n";
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "BUSCAR CURSO POR CATEGORIA";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    Console::SetCursorPosition(5, 4);
     cout << "Categoria (Programacion/Diseno/etc): ";
     getline(cin, categoria);
 
-    cout << "\nCursos de " << categoria << ":\n\n";
+    Console::SetCursorPosition(5, 6);
+    cout << "Cursos de " << categoria << ":";
+
+    int y = 8;
     int n = 1;
     int total = cursos.contar([&](const Curso& c) { return c.categoria == categoria; });
+
     cursos.mostrar([&](const Curso& c) {
         if (c.categoria == categoria) {
-            cout << n++ << ". " << c.titulo << "\n";
-            cout << "   Nivel: " << c.nivel << " | Inscritos: " << c.inscritos << "\n\n";
+            Console::SetCursorPosition(5, y++);
+            cout << n++ << ". " << c.titulo;
+
+            Console::SetCursorPosition(5, y++);
+            cout << "   Nivel: " << c.nivel << " | Inscritos: " << c.inscritos;
+            y++; // Espacio entre cursos
         }
         });
-    cout << "Total encontrados: " << total << "\n";
+
+    Console::SetCursorPosition(5, y);
+    cout << "Total encontrados: " << total;
+
     esperarEnter();
 }
 
 void pantallaOrdenarCursos() {
-    Console::Clear();
+    Fondos::DibujarFondoSecundario();
+
     ordenarCursosBurbuja(cursos);
     registrarHistorial("ORDENAMIENTO", "Cursos ordenados por inscritos");
 
-    cout << "CURSOS ORDENADOS POR INSCRITOS (DESC)\n\n";
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(30, 2);
+    cout << "CURSOS ORDENADOS POR INSCRITOS (DESC)";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    int y = 4;
     int pos = 1;
     cursos.mostrar([&](const Curso& c) {
-        cout << pos++ << ". " << c.titulo << " (" << c.inscritos << " inscritos)\n";
+        Console::SetCursorPosition(5, y++);
+        cout << pos++ << ". " << c.titulo << " (" << c.inscritos << " inscritos)";
         });
+
     esperarEnter();
 }
 
 void pantallaHistorial() {
-    Console::Clear();
-    cout << "HISTORIAL DE ACCIONES (PILA)\n\n";
+    Fondos::DibujarFondoSecundario();
+
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "HISTORIAL DE ACCIONES (PILA)";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    int y = 4;
     int n = 1;
     if (historial.estaVacia()) {
-        cout << "No hay historial registrado.\n";
+        Console::SetCursorPosition(5, y);
+        cout << "No hay historial registrado.";
     }
     else {
         historial.mostrar([&](const Historial& h) {
-            cout << n++ << ". [" << h.accion << "] " << h.detalle << "\n";
-            cout << "   Fecha: " << h.fecha << "\n\n";
+            Console::SetCursorPosition(5, y++);
+            cout << n++ << ". [" << h.accion << "] " << h.detalle;
+
+            Console::SetCursorPosition(5, y++);
+            cout << "   Fecha: " << h.fecha;
+            y++; // Espacio entre registros
             });
     }
+
+    esperarEnter();
+}
+
+void pantallaRegistrarUsuario() {
+    Fondos::DibujarFondoSecundario();
+
+    string nombre, apellido, dni, correo;
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "REGISTRAR USUARIO";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    Console::SetCursorPosition(5, 4);
+    cout << "Nombre: ";
+    getline(cin, nombre);
+
+    Console::SetCursorPosition(5, 5);
+    cout << "Apellido: ";
+    getline(cin, apellido);
+
+    Console::SetCursorPosition(5, 6);
+    cout << "DNI: ";
+    getline(cin, dni);
+
+    Console::SetCursorPosition(5, 7);
+    cout << "Correo: ";
+    getline(cin, correo);
+
+    bool existe = usuarios.existe([&](const Usuario& u) { return u.correo == correo; });
+
+    Console::SetCursorPosition(5, 9);
+    if (existe) {
+        Console::ForegroundColor = ConsoleColor::Red;
+        cout << "ERROR: El correo ya esta registrado!";
+    }
+    else {
+        usuarios.agregar(Usuario(nombre, apellido, dni, correo, obtenerFechaActual()));
+        registrarHistorial("REGISTRO", "Usuario: " + nombre + " " + apellido);
+        Console::ForegroundColor = ConsoleColor::Green;
+        cout << "Usuario registrado con exito!";
+    }
+
+    Console::ForegroundColor = ConsoleColor::White;
+    esperarEnter();
+}
+
+void pantallaInscribirseEnCurso() {
+    Fondos::DibujarFondoSecundario();
+
+    string correo, tituloCurso;
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "INSCRIBIRSE EN CURSO";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    Console::SetCursorPosition(5, 4);
+    cout << "Tu correo: ";
+    getline(cin, correo);
+
+    Console::SetCursorPosition(5, 5);
+    cout << "Titulo del curso: ";
+    getline(cin, tituloCurso);
+
+    bool usuarioExiste = usuarios.existe([&](const Usuario& u) { return u.correo == correo; });
+    Curso* cursoEncontrado = cursos.buscar([&](const Curso& c) { return c.titulo == tituloCurso; });
+    bool yaInscrito = inscripciones.existe([&](const Inscripcion& i) {
+        return i.correoUsuario == correo && i.tituloCurso == tituloCurso;
+        });
+
+    Console::SetCursorPosition(5, 7);
+    if (!usuarioExiste) {
+        Console::ForegroundColor = ConsoleColor::Red;
+        cout << "ERROR: Usuario no encontrado!";
+    }
+    else if (cursoEncontrado == nullptr) {
+        Console::ForegroundColor = ConsoleColor::Red;
+        cout << "ERROR: Curso no encontrado!";
+    }
+    else if (yaInscrito) {
+        Console::ForegroundColor = ConsoleColor::Red;
+        cout << "ERROR: Ya estas inscrito en este curso!";
+    }
+    else {
+        inscripciones.agregar(Inscripcion(correo, tituloCurso, obtenerFechaActual()));
+        cursoEncontrado->inscritos++;
+        solicitudesPendientes.encolar("Inscripcion: " + correo + " -> " + tituloCurso);
+        registrarHistorial("INSCRIPCION", correo + " en " + tituloCurso);
+        Console::ForegroundColor = ConsoleColor::Green;
+        cout << "Inscripcion realizada con exito!";
+    }
+
+    Console::ForegroundColor = ConsoleColor::White;
+    esperarEnter();
+}
+
+void pantallaCalificarCurso() {
+    Fondos::DibujarFondoSecundario();
+
+    string correo, tituloCurso, comentario;
+    int estrellas;
+
+    Console::ForegroundColor = ConsoleColor::Yellow;
+    Console::SetCursorPosition(35, 2);
+    cout << "CALIFICAR CURSO";
+    Console::ForegroundColor = ConsoleColor::White;
+
+    Console::SetCursorPosition(5, 4);
+    cout << "Tu correo: ";
+    getline(cin, correo);
+
+    Console::SetCursorPosition(5, 5);
+    cout << "Curso a calificar: ";
+    getline(cin, tituloCurso);
+
+    Console::SetCursorPosition(5, 6);
+    cout << "Estrellas (1-5): ";
+    cin >> estrellas;
+    cin.ignore(10000, '\n');
+
+    Console::SetCursorPosition(5, 7);
+    cout << "Comentario: ";
+    getline(cin, comentario);
+
+    bool estaInscrito = inscripciones.existe([&](const Inscripcion& i) {
+        return i.correoUsuario == correo && i.tituloCurso == tituloCurso;
+        });
+
+    Console::SetCursorPosition(5, 9);
+    if (!estaInscrito) {
+        Console::ForegroundColor = ConsoleColor::Red;
+        cout << "Debes estar inscrito para calificar!";
+    }
+    else if (estrellas < 1 || estrellas > 5) {
+        Console::ForegroundColor = ConsoleColor::Red;
+        cout << "Calificacion invalida (1-5)!";
+    }
+    else {
+        calificaciones.agregar(Calificacion(correo, tituloCurso, estrellas, comentario));
+        registrarHistorial("CALIFICACION", correo + " califico " + tituloCurso);
+        Console::ForegroundColor = ConsoleColor::Green;
+        cout << "Gracias por tu calificacion!";
+    }
+
+    Console::ForegroundColor = ConsoleColor::White;
     esperarEnter();
 }
 
 int main() {
     Console::SetWindowSize(110, 35); // ventana; el buffer por defecto ya permite scroll
 
+    // Inicializar fondos
+    Fondos::InicializarFondos();
+
     // Inicializar cursos por defecto (en memoria)
     inicializarCursos();
 
     int opcion;
     do {
-        Console::Clear();
         mostrarMenu();
         if (!(cin >> opcion)) { cin.clear(); cin.ignore(10000, '\n'); opcion = -1; }
         cin.ignore(10000, '\n');  // limpiar salto
 
         switch (opcion) {
-        case 1: { // REGISTRAR USUARIO (pantalla)
-            Console::Clear();
-            string nombre, apellido, dni, correo;
-            cout << "REGISTRAR USUARIO\n\n";
-            cout << "Nombre: ";   getline(cin, nombre);
-            cout << "Apellido: "; getline(cin, apellido);
-            cout << "DNI: ";      getline(cin, dni);
-            cout << "Correo: ";   getline(cin, correo);
-
-            bool existe = usuarios.existe([&](const Usuario& u) { return u.correo == correo; });
-            cout << "\n";
-            if (existe) {
-                cout << "ERROR: El correo ya esta registrado!\n";
-            }
-            else {
-                usuarios.agregar(Usuario(nombre, apellido, dni, correo, obtenerFechaActual()));
-                registrarHistorial("REGISTRO", "Usuario: " + nombre + " " + apellido);
-                cout << "Usuario registrado con exito!\n";
-            }
-            esperarEnter();
+        case 1: // REGISTRAR USUARIO
+            pantallaRegistrarUsuario();
             break;
-        }
 
-        case 2: // LISTAR CURSOS (con temario) — otra pantalla
+        case 2: // LISTAR CURSOS (con temario)
             pantallaListarCursos();
             break;
 
-        case 3: { // INSCRIBIRSE EN CURSO
-            Console::Clear();
-            string correo, tituloCurso;
-            cout << "INSCRIBIRSE EN CURSO\n\n";
-            cout << "Tu correo: ";        getline(cin, correo);
-            cout << "Titulo del curso: "; getline(cin, tituloCurso);
-
-            bool usuarioExiste = usuarios.existe([&](const Usuario& u) { return u.correo == correo; });
-            Curso* cursoEncontrado = cursos.buscar([&](const Curso& c) { return c.titulo == tituloCurso; });
-            bool yaInscrito = inscripciones.existe([&](const Inscripcion& i) { return i.correoUsuario == correo && i.tituloCurso == tituloCurso; });
-
-            cout << "\n";
-            if (!usuarioExiste) {
-                cout << "ERROR: Usuario no encontrado!\n";
-            }
-            else if (cursoEncontrado == nullptr) {
-                cout << "ERROR: Curso no encontrado!\n";
-            }
-            else if (yaInscrito) {
-                cout << "ERROR: Ya estas inscrito en este curso!\n";
-            }
-            else {
-                inscripciones.agregar(Inscripcion(correo, tituloCurso, obtenerFechaActual()));
-                cursoEncontrado->inscritos++;
-                solicitudesPendientes.encolar("Inscripcion: " + correo + " -> " + tituloCurso);
-                registrarHistorial("INSCRIPCION", correo + " en " + tituloCurso);
-                cout << "Inscripcion realizada con exito!\n";
-            }
-            esperarEnter();
+        case 3: // INSCRIBIRSE EN CURSO
+            pantallaInscribirseEnCurso();
             break;
-        }
 
         case 4: // VER USUARIOS REGISTRADOS
             pantallaVerUsuarios();
@@ -349,32 +561,9 @@ int main() {
             pantallaMisCursos();
             break;
 
-        case 7: { // CALIFICAR CURSO
-            Console::Clear();
-            string correo, tituloCurso, comentario; int estrellas;
-            cout << "CALIFICAR CURSO\n\n";
-            cout << "Tu correo: ";           getline(cin, correo);
-            cout << "Curso a calificar: ";   getline(cin, tituloCurso);
-            cout << "Estrellas (1-5): ";     cin >> estrellas; cin.ignore(10000, '\n');
-            cout << "Comentario: ";          getline(cin, comentario);
-
-            bool estaInscrito = inscripciones.existe([&](const Inscripcion& i) { return i.correoUsuario == correo && i.tituloCurso == tituloCurso; });
-
-            cout << "\n";
-            if (!estaInscrito) {
-                cout << "Debes estar inscrito para calificar!\n";
-            }
-            else if (estrellas < 1 || estrellas > 5) {
-                cout << "Calificacion invalida (1-5)!\n";
-            }
-            else {
-                calificaciones.agregar(Calificacion(correo, tituloCurso, estrellas, comentario));
-                registrarHistorial("CALIFICACION", correo + " califico " + tituloCurso);
-                cout << "Gracias por tu calificacion!\n";
-            }
-            esperarEnter();
+        case 7: // CALIFICAR CURSO
+            pantallaCalificarCurso();
             break;
-        }
 
         case 8: // BUSCAR CURSO POR CATEGORIA
             pantallaBuscarCategoria();
@@ -389,13 +578,19 @@ int main() {
             break;
 
         case 0:
-            Console::Clear();
-            cout << "Gracias por usar OpenCursos!\n";
+            Fondos::DibujarFondoSecundario();
+            Console::ForegroundColor = ConsoleColor::Green;
+            Console::SetCursorPosition(35, 15);
+            cout << "Gracias por usar OpenCursos!";
+            Console::SetCursorPosition(0, 30);
             break;
 
         default:
-            Console::Clear();
-            cout << "Opcion invalida!\n";
+            Fondos::DibujarFondoSecundario();
+            Console::ForegroundColor = ConsoleColor::Red;
+            Console::SetCursorPosition(35, 15);
+            cout << "Opcion invalida!";
+            Console::ForegroundColor = ConsoleColor::White;
             esperarEnter();
             break;
         }
